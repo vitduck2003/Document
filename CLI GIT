@@ -1,0 +1,420 @@
+Chào bạn, rất vui được giúp bạn tổng hợp các lệnh Git từ cơ bản đến nâng cao, kèm theo giải thích chi tiết và trường hợp sử dụng cụ thể. Git là một hệ thống quản lý phiên bản phân tán (Distributed Version Control System - DVCS) rất mạnh mẽ, được sử dụng rộng rãi trong phát triển phần mềm để theo dõi và quản lý sự thay đổi của mã nguồn. Dưới đây là danh sách các lệnh Git được phân loại để bạn dễ dàng tham khảo:
+
+I. Nhóm lệnh cơ bản (Basic Commands):
+
+git init: Khởi tạo một kho chứa Git mới.
+
+Giải thích: Lệnh git init được sử dụng để tạo một kho chứa Git (repository) mới trong thư mục hiện tại. Khi bạn chạy lệnh này, Git sẽ tạo một thư mục .git ẩn bên trong thư mục làm việc của bạn. Thư mục .git này chứa tất cả thông tin cấu hình, lịch sử thay đổi và các đối tượng của kho chứa Git.
+Trường hợp sử dụng:
+Khi bạn bắt đầu một dự án mới và muốn quản lý mã nguồn của dự án bằng Git.
+Khi bạn muốn biến một thư mục hiện tại thành một kho chứa Git để theo dõi các thay đổi.
+Ví dụ:
+Bash
+
+cd ten-du-an-cua-ban
+git init
+Lệnh này sẽ khởi tạo một kho chứa Git trong thư mục ten-du-an-cua-ban.
+git clone <địa_chỉ_URL>: Sao chép một kho chứa Git từ xa về máy cục bộ.
+
+Giải thích: Lệnh git clone cho phép bạn sao chép (clone) một kho chứa Git đã có sẵn (thường là từ một máy chủ từ xa như GitHub, GitLab, Bitbucket...) về máy tính của bạn. Lệnh này sẽ tải về toàn bộ lịch sử thay đổi, nhánh và các tập tin của kho chứa.
+Trường hợp sử dụng:
+Khi bạn muốn tham gia vào một dự án đã có sẵn trên một kho chứa Git từ xa.
+Khi bạn muốn tạo một bản sao cục bộ của một dự án để làm việc.
+Ví dụ:
+Bash
+
+git clone https://github.com/ten-nguoi-dung/ten-kho-chua.git
+Lệnh này sẽ sao chép kho chứa có địa chỉ https://github.com/ten-nguoi-dung/ten-kho-chua.git vào thư mục hiện tại. Bạn cũng có thể chỉ định tên thư mục khác nếu muốn:
+Bash
+
+git clone https://github.com/ten-nguoi-dung/ten-kho-chua.git ten-thu-muc-moi
+git add <tên_tập_tin> hoặc git add .: Thêm các thay đổi vào vùng chờ (staging area).
+
+Giải thích: Sau khi bạn thực hiện các thay đổi trong thư mục làm việc (thêm, sửa, xóa tập tin), bạn cần sử dụng git add để đưa những thay đổi này vào vùng chờ (staging area). Vùng chờ là một khu vực trung gian, nơi bạn chọn lọc những thay đổi nào sẽ được đưa vào commit tiếp theo.
+git add <tên_tập_tin>: Thêm một hoặc nhiều tập tin cụ thể vào vùng chờ.
+git add .: Thêm tất cả các thay đổi (tập tin mới, đã sửa đổi, đã xóa) trong thư mục hiện tại và các thư mục con vào vùng chờ.
+Trường hợp sử dụng:
+Khi bạn muốn chuẩn bị các thay đổi để commit.
+Trước khi thực hiện commit, bạn phải add các thay đổi vào vùng chờ.
+Ví dụ:
+Bash
+
+git add index.html style.css script.js  # Thêm ba tập tin cụ thể
+git add .                           # Thêm tất cả các thay đổi
+git commit -m "<thông_điệp_commit>": Lưu các thay đổi từ vùng chờ vào lịch sử phiên bản (commit).
+
+Giải thích: Lệnh git commit ghi lại các thay đổi đã được thêm vào vùng chờ thành một phiên bản (commit) trong lịch sử của kho chứa. Mỗi commit đại diện cho một "snapshot" của dự án tại một thời điểm cụ thể. Bạn cần cung cấp một thông điệp commit (commit message) mô tả ngắn gọn về những thay đổi bạn đã thực hiện. Thông điệp commit tốt giúp người khác (và chính bạn sau này) dễ dàng hiểu được mục đích của commit.
+Trường hợp sử dụng:
+Khi bạn đã hoàn thành một phần công việc và muốn lưu lại nó vào lịch sử phiên bản.
+Sau khi add các thay đổi vào vùng chờ, bạn cần commit để hoàn tất việc lưu lại phiên bản.
+Ví dụ:
+Bash
+
+git commit -m "Hoàn thành chức năng đăng nhập người dùng"
+git commit -m "Sửa lỗi hiển thị trên trang chủ"
+git commit: Nếu bạn chỉ dùng git commit mà không có -m, Git sẽ mở trình soạn thảo văn bản mặc định để bạn nhập thông điệp commit.
+git status: Hiển thị trạng thái của thư mục làm việc và vùng chờ.
+
+Giải thích: Lệnh git status cho bạn biết trạng thái hiện tại của thư mục làm việc, vùng chờ và kho chứa Git. Nó hiển thị:
+Các tập tin đã được sửa đổi nhưng chưa được thêm vào vùng chờ (Untracked files hoặc Modified files).
+Các tập tin đã được thêm vào vùng chờ (Staged changes).
+Nhánh hiện tại bạn đang làm việc.
+Trạng thái đồng bộ với kho chứa từ xa (nếu có).
+Trường hợp sử dụng:
+Khi bạn muốn kiểm tra xem có những thay đổi nào trong thư mục làm việc.
+Trước khi add hoặc commit, bạn nên dùng git status để xem lại các thay đổi.
+Khi bạn muốn biết nhánh hiện tại và trạng thái đồng bộ với remote.
+Ví dụ:
+Bash
+
+git status
+Kết quả sẽ hiển thị thông tin chi tiết về trạng thái của kho chứa.
+git log: Xem lịch sử commit.
+
+Giải thích: Lệnh git log hiển thị lịch sử commit của kho chứa. Nó cho bạn thấy danh sách các commit đã được thực hiện, thông tin về tác giả, thời gian commit và thông điệp commit.
+Trường hợp sử dụng:
+Khi bạn muốn xem lại lịch sử thay đổi của dự án.
+Khi bạn muốn tìm một commit cụ thể.
+Khi bạn muốn xem ai đã thực hiện thay đổi gì và khi nào.
+Ví dụ:
+Bash
+
+git log
+git log --oneline: Hiển thị lịch sử commit ngắn gọn trên một dòng.
+git log --graph --oneline --decorate --all: Hiển thị lịch sử commit dạng đồ thị, nhánh, tag, ...
+git log -p: Hiển thị chi tiết các thay đổi (diff) của mỗi commit.
+git log --author="Tên Tác Giả": Lọc lịch sử commit theo tác giả.
+git log --since="2 weeks ago": Lọc lịch sử commit từ 2 tuần trước.
+II. Nhóm lệnh về Nhánh và Hợp nhất (Branching and Merging Commands):
+
+git branch: Quản lý nhánh (xem, tạo, xóa).
+
+Giải thích: Lệnh git branch được sử dụng để quản lý các nhánh (branch) trong kho chứa Git. Nhánh cho phép bạn làm việc trên các tính năng mới, sửa lỗi hoặc thử nghiệm mà không ảnh hưởng đến nhánh chính (thường là main hoặc master).
+git branch: Hiển thị danh sách các nhánh hiện có. Nhánh hiện tại được đánh dấu bằng dấu *.
+git branch <tên_nhánh>: Tạo một nhánh mới với tên <tên_nhánh>.
+git branch -d <tên_nhánh> hoặc git branch -D <tên_nhánh>: Xóa một nhánh. -d chỉ xóa khi nhánh đã được hợp nhất, -D xóa nhánh bất kể trạng thái hợp nhất.
+Trường hợp sử dụng:
+Để xem danh sách các nhánh hiện có.
+Để tạo một nhánh mới khi bắt đầu phát triển một tính năng mới hoặc sửa lỗi.
+Để xóa một nhánh khi công việc trên nhánh đó đã hoàn tất và được hợp nhất.
+Ví dụ:
+Bash
+
+git branch                       # Xem danh sách nhánh
+git branch tinh-nang-moi         # Tạo nhánh 'tinh-nang-moi'
+git branch -d tinh-nang-moi      # Xóa nhánh 'tinh-nang-moi'
+git checkout <tên_nhánh> hoặc git checkout <commit_hash>: Chuyển đổi giữa các nhánh hoặc commit.
+
+Giải thích: Lệnh git checkout cho phép bạn chuyển đổi giữa các nhánh khác nhau hoặc trở về một commit cụ thể trong lịch sử.
+git checkout <tên_nhánh>: Chuyển sang nhánh có tên <tên_nhánh>. Thư mục làm việc của bạn sẽ được cập nhật để phản ánh trạng thái của nhánh đó.
+git checkout <commit_hash>: Chuyển sang commit có mã hash <commit_hash>. Bạn sẽ ở trạng thái "detached HEAD", tức là không thuộc nhánh nào. Thường dùng để xem lại lịch sử.
+git checkout -b <tên_nhánh>: Tạo một nhánh mới và đồng thời chuyển sang nhánh đó.
+Trường hợp sử dụng:
+Để chuyển sang một nhánh khác để làm việc.
+Để xem lại trạng thái của dự án tại một commit cụ thể trong lịch sử.
+Để tạo nhánh mới và chuyển sang nhánh đó một cách nhanh chóng.
+Ví dụ:
+Bash
+
+git checkout main                 # Chuyển sang nhánh 'main'
+git checkout tinh-nang-moi         # Chuyển sang nhánh 'tinh-nang-moi'
+git checkout abc123def456...     # Chuyển sang commit có hash abc123def456...
+git checkout -b nhanh-sua-loi      # Tạo nhánh 'nhanh-sua-loi' và chuyển sang
+git merge <tên_nhánh>: Hợp nhất (merge) một nhánh khác vào nhánh hiện tại.
+
+Giải thích: Lệnh git merge hợp nhất các thay đổi từ một nhánh khác (<tên_nhánh>) vào nhánh hiện tại bạn đang làm việc. Quá trình hợp nhất tạo ra một commit mới (merge commit) để ghi lại sự hợp nhất này (trong trường hợp fast-forward merge thì không có commit merge).
+Trường hợp sử dụng:
+Khi bạn muốn tích hợp các thay đổi từ một nhánh tính năng (feature branch) hoặc nhánh sửa lỗi (bugfix branch) vào nhánh chính (ví dụ main).
+Sau khi hoàn thành công việc trên một nhánh, bạn cần hợp nhất nó vào nhánh chính để tích hợp vào dự án chính.
+Ví dụ:
+Bash
+
+git checkout main                # Chuyển sang nhánh 'main'
+git merge tinh-nang-moi         # Hợp nhất nhánh 'tinh-nang-moi' vào 'main'
+Nếu có xung đột (conflict) trong quá trình hợp nhất, bạn cần phải giải quyết xung đột thủ công bằng cách sửa đổi các tập tin bị xung đột, sau đó git add các tập tin đã sửa và git commit để hoàn tất quá trình hợp nhất.
+git rebase <tên_nhánh>: Tái tạo lại nhánh hiện tại dựa trên một nhánh khác.
+
+Giải thích: Lệnh git rebase cũng dùng để tích hợp các thay đổi từ một nhánh khác vào nhánh hiện tại, tương tự như git merge. Tuy nhiên, git rebase thực hiện việc này bằng cách "tái tạo" (rebase) lại nhánh hiện tại dựa trên nhánh mục tiêu. Nó sẽ di chuyển toàn bộ các commit của nhánh hiện tại lên trên đầu của nhánh mục tiêu, tạo ra một lịch sử commit tuyến tính hơn (không có merge commit).
+Trường hợp sử dụng:
+Khi bạn muốn giữ cho lịch sử commit của nhánh chính được sạch sẽ và tuyến tính.
+Khi bạn muốn tích hợp các thay đổi mới nhất từ nhánh chính vào nhánh tính năng của mình một cách "sạch sẽ".
+Ví dụ:
+Bash
+
+git checkout tinh-nang-moi         # Chuyển sang nhánh 'tinh-nang-moi'
+git rebase main                 # Tái tạo nhánh 'tinh-nang-moi' dựa trên 'main'
+LƯU Ý: Rebase làm thay đổi lịch sử commit. Không nên rebase các nhánh đã được chia sẻ với người khác vì có thể gây ra vấn đề cho những người khác đang làm việc trên cùng nhánh đó. Rebase thường được sử dụng cho các nhánh tính năng cá nhân trước khi hợp nhất vào nhánh chính.
+III. Nhóm lệnh về Kho chứa từ xa (Remote Repository Commands):
+
+git remote add <tên_remote> <địa_chỉ_URL>: Thêm một kho chứa từ xa.
+
+Giải thích: Lệnh git remote add cho phép bạn thiết lập một kết nối đến một kho chứa Git từ xa (remote repository). <tên_remote> là tên bạn đặt cho remote (thường dùng origin), <địa_chỉ_URL> là địa chỉ URL của kho chứa từ xa.
+Trường hợp sử dụng:
+Khi bạn muốn kết nối kho chứa cục bộ của mình với một kho chứa từ xa để có thể đẩy (push) và kéo (pull) các thay đổi.
+Thường được sử dụng sau khi bạn đã git init một kho chứa cục bộ và muốn liên kết nó với kho chứa trên GitHub, GitLab, ...
+Ví dụ:
+Bash
+
+git remote add origin https://github.com/ten-nguoi-dung/ten-kho-chua.git
+Lệnh này thêm một remote có tên origin và địa chỉ URL là https://github.com/ten-nguoi-dung/ten-kho-chua.git.
+git remote -v: Xem danh sách các remote đã cấu hình.
+
+Giải thích: Lệnh git remote -v hiển thị danh sách các remote đã được cấu hình cho kho chứa hiện tại, kèm theo địa chỉ URL của chúng (cả URL cho fetch và push).
+Trường hợp sử dụng:
+Để kiểm tra xem remote đã được cấu hình đúng chưa.
+Để xem danh sách các remote và địa chỉ URL của chúng.
+Ví dụ:
+Bash
+
+git remote -v
+Kết quả có thể hiển thị:
+origin  https://github.com/ten-nguoi-dung/ten-kho-chua.git (fetch)
+origin  https://github.com/ten-nguoi-dung/ten-kho-chua.git (push)
+git push <tên_remote> <tên_nhánh>: Đẩy (push) các commit từ nhánh cục bộ lên nhánh tương ứng trên remote.
+
+Giải thích: Lệnh git push dùng để tải lên (push) các commit từ nhánh cục bộ của bạn lên nhánh tương ứng trên kho chứa từ xa. <tên_remote> là tên của remote (ví dụ origin), <tên_nhánh> là tên nhánh cục bộ bạn muốn đẩy lên (ví dụ main, tinh-nang-moi).
+Trường hợp sử dụng:
+Khi bạn muốn chia sẻ các thay đổi cục bộ của mình với người khác bằng cách đưa chúng lên kho chứa từ xa.
+Sau khi bạn đã commit các thay đổi cục bộ, bạn cần push để đồng bộ chúng với remote.
+Ví dụ:
+Bash
+
+git push origin main            # Đẩy nhánh 'main' cục bộ lên nhánh 'main' trên remote 'origin'
+git push origin tinh-nang-moi     # Đẩy nhánh 'tinh-nang-moi' cục bộ lên nhánh 'tinh-nang-moi' trên remote 'origin'
+git push -u origin main: Thêm tùy chọn -u (hay --set-upstream) để thiết lập nhánh cục bộ main theo dõi (tracking) nhánh origin/main. Sau này bạn chỉ cần dùng git push hoặc git pull mà không cần chỉ định origin main nữa.
+git pull <tên_remote> <tên_nhánh>: Kéo (pull) các commit từ nhánh trên remote về nhánh cục bộ.
+
+Giải thích: Lệnh git pull dùng để tải về (pull) các commit mới nhất từ nhánh trên kho chứa từ xa về nhánh cục bộ của bạn và tự động hợp nhất (merge) chúng vào nhánh cục bộ. <tên_remote> là tên của remote (ví dụ origin), <tên_nhánh> là tên nhánh trên remote bạn muốn kéo về (ví dụ main).
+Trường hợp sử dụng:
+Khi bạn muốn cập nhật nhánh cục bộ của mình với các thay đổi mới nhất từ kho chứa từ xa.
+Trước khi bắt đầu làm việc, bạn nên pull để đảm bảo nhánh cục bộ của bạn đã được cập nhật.
+Ví dụ:
+Bash
+
+git pull origin main            # Kéo nhánh 'main' từ remote 'origin' về nhánh 'main' cục bộ và hợp nhất
+git pull origin tinh-nang-moi     # Kéo nhánh 'tinh-nang-moi' từ remote 'origin' về nhánh 'tinh-nang-moi' cục bộ và hợp nhất
+git fetch <tên_remote>: Tải về các đối tượng và tham chiếu từ remote nhưng không hợp nhất.
+
+Giải thích: Lệnh git fetch cũng tải về các đối tượng (commit, nhánh, tag, ...) và tham chiếu từ kho chứa từ xa, nhưng nó không tự động hợp nhất các thay đổi vào nhánh cục bộ của bạn. Thay vào đó, nó chỉ cập nhật các nhánh remote tracking (ví dụ origin/main, origin/tinh-nang-moi). Bạn có thể xem các thay đổi từ remote bằng git log origin/main và sau đó quyết định cách hợp nhất (ví dụ dùng git merge origin/main hoặc git rebase origin/main).
+Trường hợp sử dụng:
+Khi bạn muốn xem các thay đổi trên remote mà không muốn tự động hợp nhất ngay lập tức.
+Khi bạn muốn kiểm tra các thay đổi từ remote trước khi quyết định cách tích hợp chúng vào nhánh cục bộ.
+Ví dụ:
+Bash
+
+git fetch origin                 # Tải về thông tin từ remote 'origin'
+git log origin/main              # Xem commit mới nhất trên nhánh 'origin/main'
+git merge origin/main            # Hợp nhất nhánh 'origin/main' vào nhánh hiện tại
+IV. Nhóm lệnh về Lịch sử và Kiểm tra (History and Inspection Commands):
+
+git diff: Xem sự khác biệt giữa các commit, nhánh, vùng chờ, thư mục làm việc.
+
+Giải thích: Lệnh git diff hiển thị sự khác biệt (difference) giữa các trạng thái khác nhau của kho chứa Git.
+git diff: Hiển thị sự khác biệt giữa thư mục làm việc và vùng chờ (những thay đổi chưa được add).
+git diff --staged hoặc git diff --cached: Hiển thị sự khác biệt giữa vùng chờ và commit cuối cùng (HEAD) (những thay đổi đã được add vào vùng chờ).
+git diff <commit_hash1> <commit_hash2>: Hiển thị sự khác biệt giữa hai commit.
+git diff <nhánh1> <nhánh2>: Hiển thị sự khác biệt giữa hai nhánh.
+git diff <tên_tập_tin>: Hiển thị sự khác biệt trên một tập tin cụ thể.
+Trường hợp sử dụng:
+Để xem các thay đổi chưa được thêm vào vùng chờ.
+Để xem các thay đổi đã được thêm vào vùng chờ.
+Để so sánh sự khác biệt giữa hai commit hoặc hai nhánh.
+Để xem chi tiết các thay đổi trên một tập tin cụ thể.
+Ví dụ:
+Bash
+
+git diff                     # Xem thay đổi chưa staged
+git diff --staged            # Xem thay đổi đã staged
+git diff HEAD^ HEAD          # Xem thay đổi giữa commit trước và commit hiện tại
+git diff main tinh-nang-moi   # Xem thay đổi giữa nhánh 'main' và 'tinh-nang-moi'
+git diff index.html          # Xem thay đổi trên tập tin 'index.html'
+git show <commit_hash>: Hiển thị thông tin chi tiết về một commit.
+
+Giải thích: Lệnh git show hiển thị thông tin chi tiết về một commit cụ thể, bao gồm thông điệp commit, tác giả, ngày tháng và danh sách các thay đổi (diff) được thực hiện trong commit đó.
+Trường hợp sử dụng:
+Khi bạn muốn xem chi tiết về một commit cụ thể trong lịch sử.
+Khi bạn muốn xem các thay đổi được giới thiệu trong một commit.
+Ví dụ:
+Bash
+
+git show abc123def456...      # Hiển thị chi tiết commit có hash abc123def456...
+git show HEAD                # Hiển thị chi tiết commit HEAD (commit mới nhất)
+git blame <tên_tập_tin>: Hiển thị thông tin về người sửa đổi cuối cùng của từng dòng trong một tập tin.
+
+Giải thích: Lệnh git blame (đôi khi còn gọi là git annotate) hiển thị nội dung của một tập tin và chú thích (blame) mỗi dòng với thông tin về commit và tác giả đã sửa đổi dòng đó lần cuối cùng.
+Trường hợp sử dụng:
+Khi bạn muốn tìm hiểu ai là người đã viết hoặc sửa đổi một dòng code cụ thể trong một tập tin.
+Để tìm hiểu về lịch sử sửa đổi của một phần code.
+Ví dụ:
+Bash
+
+git blame index.html         # Hiển thị thông tin blame cho tập tin 'index.html'
+git bisect: Tìm commit gây ra lỗi bằng phương pháp chia đôi.
+
+Giải thích: Lệnh git bisect giúp bạn tìm ra commit nào đã gây ra một lỗi (bug) hoặc một sự cố trong dự án bằng phương pháp tìm kiếm nhị phân (binary search). Bạn cần đánh dấu một commit "tốt" (không có lỗi) và một commit "xấu" (có lỗi), Git sẽ tự động checkout các commit trung gian và bạn cần kiểm tra xem commit đó "tốt" hay "xấu". Quá trình này sẽ giúp bạn nhanh chóng xác định được commit gây ra vấn đề.
+Trường hợp sử dụng:
+Khi bạn phát hiện ra một lỗi mới và muốn tìm commit đã gây ra lỗi đó.
+Khi bạn có một commit "tốt" (trước khi lỗi xuất hiện) và một commit "xấu" (sau khi lỗi xuất hiện).
+Ví dụ:
+Bash
+
+git bisect start            # Bắt đầu quá trình bisect
+git bisect good <commit_hash_tốt> # Đánh dấu commit 'tốt'
+git bisect bad <commit_hash_xấu>  # Đánh dấu commit 'xấu'
+# Git sẽ checkout một commit trung gian, bạn kiểm tra và đánh dấu 'good' hoặc 'bad'
+git bisect good             # Nếu commit hiện tại 'tốt'
+git bisect bad              # Nếu commit hiện tại 'xấu'
+# Lặp lại cho đến khi Git tìm ra commit đầu tiên gây ra lỗi
+git bisect reset            # Kết thúc quá trình bisect và trở về trạng thái ban đầu
+V. Nhóm lệnh nâng cao (Advanced Commands):
+
+git stash: Lưu tạm các thay đổi chưa commit để làm việc khác.
+
+Giải thích: Lệnh git stash cho phép bạn lưu tạm (stash) các thay đổi chưa commit (ở vùng làm việc và vùng chờ) để bạn có thể chuyển sang nhánh khác, thực hiện công việc khác, rồi sau đó quay lại và khôi phục (unstash) các thay đổi đã lưu tạm.
+git stash: Lưu tạm các thay đổi hiện tại và trở về trạng thái sạch (HEAD).
+git stash list: Liệt kê các stash đã lưu.
+git stash apply hoặc git stash apply stash@{n}: Khôi phục stash mới nhất hoặc stash thứ n trong danh sách stash.
+git stash pop hoặc git stash pop stash@{n}: Khôi phục stash và xóa nó khỏi danh sách stash.
+git stash drop stash@{n}: Xóa một stash cụ thể khỏi danh sách stash.
+git stash clear: Xóa tất cả các stash đã lưu.
+Trường hợp sử dụng:
+Khi bạn đang làm việc dở dang một tính năng nhưng cần phải chuyển sang nhánh khác để sửa lỗi khẩn cấp hoặc làm công việc khác.
+Khi bạn muốn "dọn dẹp" thư mục làm việc của mình để chuyển nhánh mà không muốn commit các thay đổi chưa hoàn chỉnh.
+Ví dụ:
+Bash
+
+git stash                     # Lưu tạm các thay đổi
+git stash list                # Xem danh sách stash
+git checkout main               # Chuyển sang nhánh 'main'
+# ... làm công việc khác trên nhánh 'main' ...
+git checkout nhanh-sua-loi      # Quay lại nhánh 'nhanh-sua-loi'
+git stash pop                   # Khôi phục stash đã lưu
+git reset: Hoàn tác các thay đổi, đưa kho chứa về trạng thái trước đó.
+
+Giải thích: Lệnh git reset là một lệnh mạnh mẽ dùng để hoàn tác các thay đổi, đưa kho chứa Git về một trạng thái commit trước đó. Có nhiều tùy chọn khác nhau cho git reset với mức độ hoàn tác khác nhau:
+git reset --soft <commit_hash>: Đưa HEAD và nhánh hiện tại về commit <commit_hash>, nhưng giữ lại các thay đổi ở vùng chờ và thư mục làm việc. (Chỉ thay đổi commit, không thay đổi vùng chờ và thư mục làm việc)
+git reset --mixed <commit_hash> (mặc định nếu không có tùy chọn): Đưa HEAD và nhánh hiện tại về commit <commit_hash>, và đưa các thay đổi từ commit đó vào vùng làm việc (unstage). (Thay đổi commit và vùng chờ, giữ lại thay đổi ở thư mục làm việc)
+git reset --hard <commit_hash>: Đưa HEAD và nhánh hiện tại về commit <commit_hash>, và xóa tất cả các thay đổi từ commit đó trong vùng chờ và thư mục làm việc. (Thay đổi commit, vùng chờ và thư mục làm việc, cẩn thận mất dữ liệu nếu chưa commit)
+git reset HEAD <tên_tập_tin>: Unstage một tập tin (xóa khỏi vùng chờ), nhưng không thay đổi nội dung tập tin trong thư mục làm việc.
+Trường hợp sử dụng:
+Khi bạn muốn hoàn tác một commit gần nhất (thường dùng git reset --soft HEAD^ để sửa lại thông điệp commit hoặc thêm thay đổi vào commit trước).
+Khi bạn muốn loại bỏ các thay đổi đã staged (dùng git reset HEAD <tên_tập_tin>).
+Khi bạn muốn hoàn toàn trở về một commit trước đó và xóa bỏ mọi thay đổi sau commit đó (dùng git reset --hard <commit_hash>, cần cẩn trọng).
+Ví dụ:
+Bash
+
+git reset --soft HEAD^         # Hoàn tác commit gần nhất, giữ lại thay đổi staged
+git reset --mixed HEAD^        # Hoàn tác commit gần nhất, đưa thay đổi về working directory (unstage)
+git reset --hard HEAD^         # Hoàn tác commit gần nhất, xóa sạch thay đổi (mất dữ liệu nếu chưa commit)
+git reset HEAD index.html      # Unstage tập tin 'index.html'
+CẢNH BÁO: git reset --hard có thể làm mất dữ liệu vĩnh viễn nếu bạn không cẩn thận. Hãy chắc chắn rằng bạn hiểu rõ mình đang làm gì và đã commit hoặc stash các thay đổi quan trọng trước khi sử dụng git reset --hard.
+git revert <commit_hash>: Tạo một commit mới để hoàn tác các thay đổi của một commit đã tồn tại.
+
+Giải thích: Lệnh git revert tạo ra một commit mới để hoàn tác (revert) các thay đổi được giới thiệu trong một commit cụ thể (<commit_hash>). Revert commit sẽ đảo ngược các thay đổi của commit gốc và tạo ra một commit mới với các thay đổi ngược lại. Nó không làm thay đổi lịch sử commit đã có, mà chỉ thêm một commit mới vào lịch sử.
+Trường hợp sử dụng:
+Khi bạn muốn hoàn tác các thay đổi của một commit cụ thể trong lịch sử nhưng vẫn muốn giữ lại lịch sử commit nguyên vẹn.
+Thường được sử dụng khi bạn đã push commit lên remote và muốn hoàn tác mà không muốn làm thay đổi lịch sử commit đã chia sẻ.
+Ví dụ:
+Bash
+
+git revert abc123def456...    # Tạo revert commit cho commit có hash abc123def456...
+git tag: Quản lý tag (thêm, xem, xóa).
+
+Giải thích: Lệnh git tag dùng để tạo và quản lý tag trong Git. Tag là một tên thân thiện, dễ nhớ được gán cho một commit cụ thể trong lịch sử. Tag thường được sử dụng để đánh dấu các phiên bản phát hành (release) của phần mềm (ví dụ v1.0.0, v1.1.0).
+git tag: Liệt kê các tag hiện có.
+git tag <tên_tag>: Tạo một tag lightweight cho commit hiện tại (HEAD).
+git tag -a <tên_tag> -m "<thông_điệp>": Tạo một tag annotated (có chú thích) cho commit hiện tại. Nên dùng tag annotated cho các phiên bản phát hành chính thức.
+git tag <tên_tag> <commit_hash>: Tạo tag cho một commit cụ thể trong lịch sử.
+git tag -d <tên_tag>: Xóa một tag cục bộ.
+git push origin --tags: Đẩy tất cả các tag lên remote.
+git push origin <tên_tag>: Đẩy một tag cụ thể lên remote.
+git fetch origin --tags: Tải tag từ remote về cục bộ.
+Trường hợp sử dụng:
+Để đánh dấu các phiên bản phát hành phần mềm (ví dụ v1.0, v2.0, ...).
+Để tạo các điểm đánh dấu quan trọng trong lịch sử dự án.
+Ví dụ:
+Bash
+
+git tag                        # Xem danh sách tag
+git tag v1.0.0                   # Tạo tag 'v1.0.0' cho commit hiện tại
+git tag -a v1.1.0 -m "Phiên bản 1.1.0 - Tính năng X, Y, Z" # Tag annotated
+git tag v0.9.0 abc123def456...  # Tag cho commit có hash abc123def456...
+git tag -d v0.9.0              # Xóa tag 'v0.9.0' cục bộ
+git push origin --tags         # Đẩy tất cả tag lên remote
+git push origin v1.0.0         # Đẩy tag 'v1.0.0' lên remote
+git submodule: Quản lý submodule (dự án con bên trong dự án chính).
+
+Giải thích: Lệnh git submodule cho phép bạn quản lý các submodule, tức là các kho chứa Git khác được nhúng vào bên trong kho chứa Git chính của bạn. Submodule hữu ích khi bạn muốn sử dụng một dự án Git khác (ví dụ một thư viện, một module) như một phần của dự án hiện tại của bạn, nhưng vẫn muốn giữ cho dự án con đó là một kho chứa Git độc lập.
+git submodule add <địa_chỉ_URL> <đường_dẫn_thư_mục>: Thêm một submodule vào dự án.
+git submodule init: Khởi tạo các submodule (sau khi clone dự án có submodule).
+git submodule update: Cập nhật các submodule lên phiên bản commit được chỉ định trong dự án chính.
+git submodule status: Xem trạng thái của các submodule.
+Trường hợp sử dụng:
+Khi bạn muốn sử dụng lại code từ một dự án Git khác như một phần của dự án hiện tại.
+Khi bạn muốn quản lý các thư viện hoặc module bên ngoài một cách độc lập nhưng vẫn tích hợp chúng vào dự án chính.
+Ví dụ:
+Bash
+
+git submodule add https://github.com/thu-vien/datepicker.git lib/datepicker # Thêm submodule 'datepicker' vào thư mục 'lib/datepicker'
+git submodule init                         # Khởi tạo submodule
+git submodule update                       # Cập nhật submodule
+git cherry-pick <commit_hash>: Chọn và áp dụng một commit từ nhánh khác vào nhánh hiện tại.
+
+Giải thích: Lệnh git cherry-pick cho phép bạn chọn một commit cụ thể từ một nhánh khác và áp dụng (cherry-pick) các thay đổi của commit đó vào nhánh hiện tại bạn đang làm việc. Nó hữu ích khi bạn muốn lấy một thay đổi cụ thể từ một nhánh khác mà không muốn hợp nhất toàn bộ nhánh đó.
+Trường hợp sử dụng:
+Khi bạn muốn "mượn" một commit sửa lỗi hoặc tính năng từ một nhánh khác mà không muốn merge toàn bộ nhánh đó.
+Khi bạn muốn chuyển một số commit chọn lọc từ nhánh tính năng sang nhánh release hoặc hotfix.
+Ví dụ:
+Bash
+
+git cherry-pick abc123def456...    # Cherry-pick commit có hash abc123def456... vào nhánh hiện tại
+VI. Nhóm lệnh Cấu hình (Configuration Commands):
+
+git config --global user.name "<Tên Bạn>": Thiết lập tên người dùng global.
+
+Giải thích: Lệnh git config dùng để cấu hình Git. Tùy chọn --global áp dụng cấu hình cho tất cả các kho chứa Git trên máy tính của bạn. user.name cấu hình tên người dùng sẽ được sử dụng trong các commit của bạn.
+Trường hợp sử dụng:
+Thiết lập tên người dùng của bạn để Git có thể ghi lại thông tin tác giả trong các commit.
+Cần thiết lập ít nhất một lần sau khi cài đặt Git.
+Ví dụ:
+Bash
+
+git config --global user.name "Nguyen Van A"
+git config --global user.email "<email@cua.ban>": Thiết lập email người dùng global.
+
+Giải thích: Tương tự như user.name, user.email cấu hình email người dùng sẽ được sử dụng trong các commit.
+Trường hợp sử dụng:
+Thiết lập email người dùng của bạn để Git có thể ghi lại thông tin tác giả trong các commit.
+Cần thiết lập ít nhất một lần sau khi cài đặt Git.
+Ví dụ:
+Bash
+
+git config --global user.email "nguyenvana@example.com"
+git config --global core.editor <trình_soạn_thảo>: Thiết lập trình soạn thảo mặc định cho Git.
+
+Giải thích: Lệnh này cấu hình trình soạn thảo văn bản mặc định mà Git sẽ sử dụng khi cần bạn nhập thông tin (ví dụ thông điệp commit, giải quyết xung đột,...). Bạn có thể chọn trình soạn thảo yêu thích của mình (ví dụ nano, vim, code (Visual Studio Code), subl (Sublime Text), atom, ...).
+Trường hợp sử dụng:
+Chọn trình soạn thảo bạn muốn sử dụng với Git.
+Nếu bạn không thiết lập, Git sẽ sử dụng trình soạn thảo mặc định của hệ thống (thường là vi hoặc nano).
+Ví dụ:
+Bash
+
+git config --global core.editor "code"  # Sử dụng Visual Studio Code làm trình soạn thảo
+git config --global core.editor "nano"  # Sử dụng nano
+git config --list: Hiển thị danh sách các cấu hình Git đã thiết lập.
+
+Giải thích: Lệnh git config --list hiển thị danh sách tất cả các cấu hình Git đã được thiết lập (global, local, system).
+Trường hợp sử dụng:
+Để kiểm tra xem các cấu hình Git đã được thiết lập như thế nào.
+Để xem danh sách các cấu hình và giá trị của chúng.
+Ví dụ:
+Bash
+
+git config --list
+Lời khuyên:
+
+Thực hành thường xuyên: Cách tốt nhất để nắm vững các lệnh Git là thực hành sử dụng chúng thường xuyên trong các dự án thực tế.
+Sử dụng tài liệu tham khảo: Luôn có tài liệu chính thức của Git (git help <lệnh> hoặc truy cập trang web Git) và các tài liệu trực tuyến khác để tham khảo khi cần.
+Làm quen với quy trình làm việc (workflow) Git: Tìm hiểu và áp dụng các quy trình làm việc phổ biến như Gitflow, GitHub flow, GitLab flow để làm việc nhóm hiệu quả với Git.
+Sử dụng công cụ GUI (nếu cần): Nếu bạn mới bắt đầu hoặc thích giao diện đồ họa, có nhiều công cụ GUI cho Git (ví dụ Sourcetree, GitKraken, GitHub Desktop, GitLab Desktop, tích hợp trong IDE như VS Code, IntelliJ IDEA, ...) có thể giúp bạn trực quan hóa và thao tác với Git dễ dàng hơn. Tuy nhiên, việc hiểu và sử dụng các lệnh dòng lệnh vẫn rất quan trọng để nắm vững Git một cách sâu sắc.
+Hy vọng danh sách này sẽ giúp bạn có cái nhìn tổng quan và chi tiết về các lệnh Git quan trọng. Chúc bạn thành công trong việc sử dụng Git!
