@@ -1,0 +1,170 @@
+1. Hiểu về CI/CD và các khái niệm liên quan:
+
+CI (Continuous Integration - Tích hợp liên tục): Là quy trình mà các thay đổi code từ nhiều nhà phát triển được tích hợp thường xuyên vào một kho chung. Mỗi lần tích hợp thường đi kèm với việc build và chạy các kiểm thử tự động để phát hiện lỗi sớm. Mục tiêu là giảm thiểu xung đột tích hợp và đảm bảo code luôn ở trạng thái hoạt động tốt.
+CD (Continuous Delivery/Continuous Deployment - Phân phối liên tục/Triển khai liên tục):
+Continuous Delivery: Mở rộng CI bằng cách tự động chuẩn bị các thay đổi code để release tới môi trường production. Quá trình này có thể bao gồm build, test, staging, nhưng bước cuối cùng để deploy production có thể cần phê duyệt thủ công.
+Continuous Deployment: Bước xa hơn Continuous Delivery, tự động deploy mọi thay đổi code đã vượt qua các giai đoạn kiểm thử vào môi trường production mà không cần can thiệp thủ công.
+Trong trường hợp của bạn, chúng ta sẽ hướng đến Continuous Delivery với các bước tự động và bước deploy lên server có thể là tự động hoặc bán tự động tùy theo cấu hình server và yêu cầu an toàn.
+
+2. GitHub Actions là gì?
+
+GitHub Actions là một nền tảng CI/CD tích hợp trực tiếp vào GitHub. Nó cho phép bạn tự động hóa các công việc trong quy trình phát triển phần mềm ngay trong repository GitHub của bạn.
+
+Workflows: Là các quy trình tự động bạn định nghĩa. Workflow được viết bằng YAML và được lưu trữ trong thư mục .github/workflows trong repository của bạn.
+Actions: Là các bước riêng lẻ trong workflow. Actions có thể là các tác vụ được GitHub cung cấp sẵn (ví dụ: actions/checkout, actions/setup-node) hoặc các actions do cộng đồng tạo ra, hoặc bạn có thể tự viết actions riêng.
+Events: Là các sự kiện kích hoạt workflow (ví dụ: push, pull_request, merge vào nhánh main, schedule, manual trigger,...).
+Runners: Là các máy chủ (ảo hoặc vật lý) chạy các workflows của bạn. GitHub cung cấp runners được quản lý bởi GitHub (GitHub-hosted runners) hoặc bạn có thể tự host runners riêng (self-hosted runners).
+3. Cấu trúc cơ bản của Workflow YAML file:
+
+Một file workflow YAML cơ bản sẽ có cấu trúc như sau:
+
+YAML
+
+name: Tên Workflow của bạn (ví dụ: CI/CD Pipeline)
+
+on:
+  # Các sự kiện kích hoạt workflow
+
+jobs:
+  # Định nghĩa các công việc (jobs) sẽ thực hiện trong workflow
+  job-id-1:
+    # Cấu hình job 1
+    steps:
+      # Các bước (steps) trong job 1
+
+  job-id-2:
+    # Cấu hình job 2
+    needs: job-id-1 # Job 2 phụ thuộc vào job 1 (chạy sau job 1 thành công)
+    steps:
+      # Các bước (steps) trong job 2
+4. Thiết kế Workflow CI/CD của bạn (Merge vào main, tạo tag, deploy):
+
+Chúng ta sẽ thiết kế workflow với các bước sau khi code được merge vào nhánh main:
+
+Checkout Code: Lấy mã nguồn mới nhất từ repository.
+Build và Test (tùy chọn): Build ứng dụng (nếu cần, ví dụ với các ngôn ngữ biên dịch) và chạy các kiểm thử tự động (unit test, integration test...). Bước này tùy thuộc vào loại ứng dụng của bạn.
+Tạo Tag: Tạo một tag Git tự động cho commit vừa được merge vào main. Tag này có thể dùng để đánh dấu phiên bản release.
+Đẩy lên Server (Deploy): Kết nối đến server và thực hiện các bước deploy ứng dụng (ví dụ: copy file, restart service, deploy container...).
+5. Viết Workflow YAML file chi tiết:
+
+Tạo một file mới trong thư mục .github/workflows trong repository của bạn, ví dụ đặt tên deploy.yml. Nội dung file như sau:
+
+YAML
+
+name: CI/CD - Deploy khi Merge vào Main
+
+on:
+  push:
+    branches:
+      - main # Workflow kích hoạt khi có push vào nhánh 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Chọn môi trường chạy (GitHub-hosted runner Ubuntu)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 # Action để checkout code từ repository
+
+      # Bước Build và Test (tùy chọn - bỏ qua nếu không cần)
+      # - name: Set up Node.js (ví dụ nếu là ứng dụng Node.js)
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '16.x'
+      # - name: Install dependencies
+      #   run: npm install
+      # - name: Run tests
+      #   run: npm test
+
+      - name: Tạo Tag và Push Tag
+        id: create_tag
+        run: |
+          NEW_TAG="v$(date +'%Y%m%d%H%M%S')" # Tạo tag dạng vYYYYMMDDHHMMSS
+          echo "::set-output name=tag_name::$NEW_TAG"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+        shell: bash
+
+      - name: Deploy lên Server
+        env: # Cấu hình biến môi trường (nên dùng GitHub Secrets cho các thông tin nhạy cảm)
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }} # Lưu SSH key trong GitHub Secrets
+          SERVER_HOST: ${{ secrets.SERVER_HOST }} # Lưu Host server trong GitHub Secrets
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }} # Lưu Username server trong GitHub Secrets
+          DEPLOY_PATH: /var/www/your-app # Đường dẫn deploy trên server
+        run: |
+          # Cấu hình SSH agent để sử dụng SSH key đã lưu
+          mkdir -p ~/.ssh
+          echo "$SERVER_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+
+          # Các lệnh deploy cụ thể (tùy thuộc vào ứng dụng và server)
+          echo "Đang deploy phiên bản tag ${{ steps.create_tag.outputs.tag_name }} lên server..."
+          # Ví dụ: Copy files qua SSH (sử dụng rsync an toàn hơn scp)
+          rsync -avz ./ $SERVER_USERNAME@$SERVER_HOST:$DEPLOY_PATH
+
+          echo "Deploy thành công!"
+
+Giải thích chi tiết từng bước:
+
+name: CI/CD - Deploy khi Merge vào Main: Tên của workflow để dễ nhận biết.
+on: push: branches: - main: Workflow này kích hoạt khi có sự kiện push code lên repository, và chỉ khi nhánh được push là main.
+jobs: deploy:: Định nghĩa một job duy nhất tên là deploy.
+runs-on: ubuntu-latest:  Chọn môi trường chạy job là Ubuntu mới nhất được cung cấp bởi GitHub (GitHub-hosted runner). Bạn có thể chọn các hệ điều hành khác hoặc tự host runner.
+
+steps::  Liệt kê các bước thực hiện trong job deploy.
+
+- name: Checkout code:
+
+uses: actions/checkout@v3: Sử dụng action actions/checkout@v3 để lấy mã nguồn từ repository về runner. Đây là action chuẩn của GitHub để checkout code.
+- name: Tạo Tag và Push Tag:
+
+id: create_tag: Đặt ID cho step này là create_tag để có thể tham chiếu đến output của step này trong các step sau (ví dụ: lấy tên tag).
+run: | ... shell: bash: Thực thi các lệnh bash.
+NEW_TAG="v$(date +'%Y%m%d%H%M%S')": Tạo biến NEW_TAG chứa tên tag tự động theo định dạng vYYYYMMDDHHMMSS (ví dụ: v20231027153000). Bạn có thể tùy chỉnh định dạng tag theo ý muốn.
+echo "::set-output name=tag_name::$NEW_TAG": Đặt output của step này với tên tag_name và giá trị là $NEW_TAG. GitHub Actions sử dụng cú pháp ::set-output name=outputName::outputValue để đặt output cho step.
+git tag $NEW_TAG: Tạo tag Git cục bộ với tên $NEW_TAG.
+git push origin $NEW_TAG: Đẩy tag vừa tạo lên remote repository (origin).
+shell: bash: Chỉ định shell để chạy các lệnh là bash.
+- name: Deploy lên Server:
+
+env: ...: Định nghĩa các biến môi trường cần thiết cho bước deploy. Quan trọng: Các thông tin nhạy cảm như SSH key, host, username nên được lưu trữ trong GitHub Secrets (Settings -> Secrets and variables -> Actions) thay vì viết trực tiếp vào file workflow.
+SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}: Lấy giá trị của secret SERVER_SSH_KEY mà bạn đã cấu hình trong GitHub Secrets.
+Tương tự cho SERVER_HOST và SERVER_USERNAME.
+DEPLOY_PATH: /var/www/your-app: Đường dẫn thư mục deploy trên server.
+run: | ...: Thực thi các lệnh bash để deploy.
+Cấu hình SSH agent: Các dòng lệnh mkdir -p ~/.ssh, echo "$SERVER_SSH_KEY" > ~/.ssh/id_rsa, chmod 600 ~/.ssh/id_rsa, ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts là để thiết lập SSH agent và thêm SSH key để có thể kết nối SSH đến server một cách tự động mà không cần mật khẩu.
+echo "Đang deploy phiên bản tag ${{ steps.create_tag.outputs.tag_name }} lên server...": In ra thông báo deploy, sử dụng output tag_name từ step create_tag. Cú pháp ${{ steps.step-id.outputs.output-name }} để truy cập output của step khác.
+rsync -avz ./ $SERVER_USERNAME@$SERVER_HOST:$DEPLOY_PATH: Sử dụng lệnh rsync để copy toàn bộ thư mục mã nguồn hiện tại (./) lên server, vào thư mục $DEPLOY_PATH. rsync là công cụ tốt để sync file qua SSH, nó chỉ copy các file thay đổi và hỗ trợ nén dữ liệu, giúp deploy nhanh và hiệu quả.
+echo "Deploy thành công!": In ra thông báo thành công.
+6. Cấu hình GitHub Secrets:
+
+Trước khi workflow hoạt động, bạn cần cấu hình các Secrets trong repository GitHub của bạn để lưu trữ thông tin nhạy cảm:
+
+Vào Settings của repository GitHub.
+Chọn Secrets and variables -> Actions.
+Nhấn New repository secret.
+Name: Nhập SERVER_SSH_KEY.
+Secret: Dán nội dung private key SSH của server của bạn vào đây. Lưu ý: Đảm bảo bạn chỉ sử dụng private key dành riêng cho mục đích deploy và hạn chế quyền truy cập của key này.
+Nhấn Add secret.
+Lặp lại các bước trên để tạo các secrets: SERVER_HOST (địa chỉ IP hoặc hostname của server), SERVER_USERNAME (username SSH trên server).
+7. Tùy chỉnh Workflow cho ứng dụng của bạn:
+
+Build và Test: Nếu ứng dụng của bạn cần build (ví dụ: Java, Go, ứng dụng frontend cần build assets...), hãy thêm các bước build và test vào workflow trước bước tạo tag. Ví dụ, nếu là ứng dụng Node.js, bạn có thể thêm các bước như trong ví dụ comment trong file YAML (Set up Node.js, Install dependencies, Run tests).
+Lệnh Deploy: Lệnh rsync trong ví dụ chỉ là một cách deploy đơn giản. Tùy thuộc vào loại ứng dụng và server của bạn, bạn có thể cần các lệnh deploy khác nhau. Ví dụ:
+Nếu deploy ứng dụng web tĩnh, bạn có thể chỉ cần copy file vào thư mục web server.
+Nếu deploy ứng dụng backend, bạn có thể cần restart service (ví dụ: systemctl restart your-app).
+Nếu deploy container Docker, bạn có thể cần SSH vào server, pull Docker image mới nhất, và restart container (sử dụng docker compose pull, docker compose up -d nếu dùng Docker Compose).
+Kiểm tra trạng thái deploy: Sau khi deploy, bạn nên thêm các bước kiểm tra để đảm bảo deploy thành công (ví dụ: kiểm tra log server, kiểm tra endpoint ứng dụng...).
+Thông báo: Bạn có thể thêm các actions để gửi thông báo (ví dụ: email, Slack, Discord...) khi deploy thành công hoặc thất bại.
+8. Lưu và Kiểm tra Workflow:
+
+Sau khi viết và cấu hình workflow, lưu file deploy.yml vào thư mục .github/workflows trong repository của bạn.
+Commit và push file này lên nhánh main.
+Thực hiện merge một pull request vào nhánh main hoặc push trực tiếp code lên nhánh main.
+Vào tab Actions trong repository GitHub của bạn để xem workflow đang chạy. Bạn có thể xem log chi tiết của từng bước để theo dõi quá trình thực hiện và gỡ lỗi nếu có lỗi xảy ra.
+Lưu ý quan trọng về bảo mật:
+
+Không bao giờ commit private key SSH trực tiếp vào repository. Sử dụng GitHub Secrets để lưu trữ các thông tin nhạy cảm.
+Hạn chế quyền truy cập của SSH key deploy. Chỉ cấp quyền tối thiểu cần thiết cho key deploy để thực hiện các thao tác deploy.
+Xem xét sử dụng các phương pháp deploy an toàn hơn nếu có yêu cầu bảo mật cao hơn, ví dụ: sử dụng các công cụ quản lý cấu hình (Ansible, Chef, Puppet), hoặc các dịch vụ deploy chuyên dụng.
