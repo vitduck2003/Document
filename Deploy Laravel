@@ -1,0 +1,88 @@
+Tuyệt vời, bạn muốn đi sâu vào việc triển khai Laravel và MySQL trên server. Hãy cùng tôi khám phá chi tiết hơn nhé!
+
+1. Chuẩn bị Server:
+
+Lựa chọn Server:
+VPS (Virtual Private Server) là lựa chọn phổ biến, cho phép bạn kiểm soát hoàn toàn môi trường.
+Các nhà cung cấp uy tín: DigitalOcean, Linode, Vultr, AWS, Google Cloud, Azure.
+Shared hosting cũng được, nhưng hạn chế tùy chỉnh.
+Hệ điều hành:
+Ubuntu hoặc CentOS là lựa chọn tốt, được hỗ trợ rộng rãi.
+Các gói cần cài đặt:
+Web server: Nginx (khuyến nghị) hoặc Apache.
+PHP: Phiên bản tương thích Laravel (PHP 8.0 trở lên).
+MySQL: Hoặc MariaDB (tương thích MySQL).
+Composer: Quản lý dependencies Laravel.
+Git: Sao chép code từ repository.
+2. Cài đặt MySQL:
+
+Trên Ubuntu:
+sudo apt update
+sudo apt install mysql-server
+sudo mysql_secure_installation (thiết lập bảo mật).
+sudo systemctl status mysql (kiểm tra trạng thái).
+Trên CentOS:
+sudo yum install mariadb-server
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+sudo mysql_secure_installation
+sudo systemctl status mariadb
+Tạo Database và User:
+mysql -u root -p (đăng nhập MySQL).
+CREATE DATABASE your_database_name;
+CREATE USER 'your_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+3. Triển khai Laravel:
+
+Sao chép code:
+git clone <your-repository-url> /var/www/your-project
+Cài đặt dependencies:
+cd /var/www/your-project
+composer install --no-dev --optimize-autoloader
+.env Configuration:
+cp .env.example .env
+Chỉnh sửa .env (database, app key, v.v.).
+php artisan key:generate
+Database Migrations:
+php artisan migrate --force
+php artisan db:seed --force (nếu cần).
+Web Server Configuration (Nginx):
+Tạo file cấu hình virtual host: /etc/nginx/sites-available/your-project.
+Nội dung:
+Nginx
+
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /var/www/your-project/public;
+    index index.php index.html;
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php<your-php-version>-fpm.sock;
+    }
+}
+Tạo Symbolic link:
+sudo ln -s /etc/nginx/sites-available/your-project /etc/nginx/sites-enabled/
+Phân quyền:
+sudo chown -R www-data:www-data /var/www/your-project/storage
+sudo chown -R www-data:www-data /var/www/your-project/bootstrap/cache
+Khởi động lại:
+sudo systemctl restart nginx
+sudo systemctl restart php<your-php-version>-fpm
+4. Tối ưu hóa:
+
+Caching: Redis, Memcached.
+Queue: Xử lý tác vụ nền.
+CDN: Phân phối tài nguyên tĩnh.
+Bảo mật: Firewall, SSL, cập nhật.
+Công cụ: Cpanel, DirectAdmin, Laravel Forge, Deployer.
+Lưu ý:
+
+Thay thế các giá trị (domain, database, v.v.).
+Phiên bản PHP và gói có thể khác.
+Hãy luôn luôn bảo mật máy chủ của bạn.
